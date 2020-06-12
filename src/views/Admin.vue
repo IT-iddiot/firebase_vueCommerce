@@ -117,4 +117,12 @@ export default {
 
 <style lang="scss" scoped>
 
+    .page-content {
+        top: 0;
+        position: absolute;
+        height: 100vh;
+        overflow-x: auto;
+        padding-top : 20px;
+    }
+
 </style>
