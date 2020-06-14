@@ -8,7 +8,7 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <router-link to="/" class="nav-link" href="#">Home <span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item">
@@ -16,26 +16,36 @@
                 </li>
                 <li class="nav-item">
                     <router-link to="/about" class="nav-link" href="#">About</router-link>
-                </li>
+                </li> -->
             </ul>
-            <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <a class="btn btn-outline-success text-success hover-white my-2 my-sm-0" data-toggle="modal" data-target="#signup">Get Started</a>
-            </form>
+
+            <span class="mr-2" data-toggle="modal" data-target="#shoppingCart">
+                <i class="fas fa-shopping-cart text-dark" style="font-size : 15px;"></i>
+            </span>
+
+            <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
+            <a class="mx-3 my-2" data-toggle="modal" data-target="#signup">
+                <i class="fas fa-user-circle" style="font-size : 22px;"></i>
+            </a> 
+
         </div>
     </nav>
 
     <login-modal/>
+    <shoppingCart/>
 
     </div>
 </template>
 
 <script>
 import loginModal from "./LoginModal.vue";
+import shoppingCart from "./ShoppingCart.vue";
+
 export default {
     name : "navbar",
     components : {
-        loginModal
+        loginModal,
+        shoppingCart
     }
 
 }

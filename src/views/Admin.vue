@@ -62,10 +62,16 @@
                             </router-link>
                         </li>
                         <li>
-                            <a href="#">
+                            <router-link to="/admin/orders">
                                 <i class="fas fa-shopping-cart"></i>
                                 <span class="menu-text">Orders</span>
-                            </a>
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link to="/admin/profile">
+                                <i class="fas fa-user"></i>
+                                <span class="menu-text">Profile</span>
+                            </router-link>
                         </li>
                         <li>
                             <a href="#" @click="logout">

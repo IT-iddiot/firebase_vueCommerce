@@ -18,7 +18,7 @@
                 <div class="col-md-12">
                     <div class="my-3">
                         <h3 class="d-inline-block">All Products</h3>
-                        <button class="btn btn-primary float-right" @click="activeModal = 'add'" data-toggle="modal" data-target="#addModal">Add Product</button>
+                        <button class="btn btn-primary float-right" @click="openAddProductModal" data-toggle="modal" data-target="#addModal">Add Product</button>
                     </div>
                     <table class="table table-bordered">
                         <thead>
@@ -37,7 +37,7 @@
                                     <button @click="editProduct(product)" class="btn btn-primary mr-4" data-toggle="modal" data-target="#addModal">
                                         Edit
                                     </button>
-                                    <button @click="deleteProduct(product['.key'])" class="btn btn-danger">
+                                    <button @click="deleteProduct(product.id)" class="btn btn-danger">
                                         Delete
                                     </button>
                                 </td>
@@ -74,13 +74,31 @@
                                     <label for="Price">Price</label>
                                     <input v-model="product.price" type="number" class="form-control">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group mb-2">
                                     <label for="Tags">Tags</label>
-                                    <input v-model="product.tags" type="text" class="form-control">
+                                    <input @keyup.enter="addTag()" v-model="newTag" type="text" class="form-control">
                                 </div>
+
+                                <div class="mb-4">
+                                    <span v-for="tag in product.tags" :key="tag.index" class="p-2 m-2 badge badge-primary text-wrap">
+                                        {{ tag }}
+                                    </span>
+                                </div>
+                                
                                 <div class="form-group">
                                     <label for="Files">Files</label>
-                                    <input type="file" class="form-control-file">
+                                    <input @change="uploadMedia" type="file" class="form-control-file">
+                                </div>
+
+                                <div class="row">
+                                    <div v-for="(image,index) in product.images" :key="index" class="position-relative mx-3 my-2">
+                                    <img 
+                                        :src="image" 
+                                        alt="Uploaded Image" 
+                                        class="uploaded-image-gallery"
+                                    >
+                                    <span @click="delete_img(image,index)" class="delete_icon"><i class="fas fa-trash"></i></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +120,7 @@
 import $ from 'jquery';
 import Swal from 'sweetalert2';
 import Toast from '../plugins/Toast';
-import {db} from "../firebase";
+import {fb, db} from "../firebase";
 // references : https://github.com/davidroyer/vue2-editor
 import { VueEditor } from "vue2-editor";
 
@@ -115,11 +133,12 @@ export default {
                 name : "",
                 description : "",
                 price : "",
-                tags : "",
-                image : ""
+                tags : [],
+                images : []
             },
             activeProductId : null,
-            activeModal : ""
+            activeModal : "",
+            newTag : null,
         }
     },
 
@@ -136,8 +155,25 @@ export default {
 
     methods : {
 
-        readProducts() {
+        openAddProductModal() {
+            this.activeModal = 'add';
+            this.product = {
+                name : "",
+                description : "",
+                price : "",
+                tags : [],
+                images : []
+            }
+        },
 
+        addProduct() {
+            // will automatically re-fetch all data in collection after add 
+            this.$firestore.products.add(this.product)
+            Toast.fire({
+                icon: 'success',
+                title: 'Product added successfully'
+            })
+            $('#addModal').modal('hide')
         },
 
         editProduct(product) {
@@ -175,27 +211,67 @@ export default {
             })
         },
 
-        addProduct() {
-            // will automatically re-fetch all data in collection after add 
-            this.$firestore.products.add(this.product)
-            Toast.fire({
-                icon: 'success',
-                title: 'Product added successfully'
+        addTag() {
+            this.product.tags.push(this.newTag);
+            this.newTag = "";
+        },
+
+        uploadMedia(event) {
+            let uploadedFile = event.target.files[0];
+            console.log(uploadedFile.lastModified)
+            // if user cancel while uploading 
+            if(uploadedFile) {
+                // references : https://firebase.google.com/docs/storage/web/upload-files?authuser=0
+                let storageRef = fb.storage().ref('/products/' + uploadedFile.name + "_" + Math.floor(Math.random() * 1000));
+                let uploadTask = storageRef.put(uploadedFile);
+                // 'state_changed' observer, called any time the state changes
+                uploadTask.on('state_changed', function(){
+    
+                }, (error) => {
+                    console.log(error);
+                }, () => {
+                    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        this.product.images.push(downloadURL);
+                        console.log('File available at', downloadURL);
+                    });
+                });
+            }
+        },
+
+        delete_img(image_url, index) {
+            this.product.images.splice(index, 1);
+            // Create a reference to the file to delete
+            let image = fb.storage().refFromURL(image_url);
+            // Delete the file
+            image.delete()
+            .then(() => {
+                console.log("deleted");
             })
-            $('#addModal').modal('hide')
+            .catch((error) => {
+                console.log(error);
+            });
+
         },
 
-        resetProduct() {
-            Object.assign(this.$data, this.$options.data.apply(this))
-        },
     },
-
-    created() {
-
-    }
 }
 </script>
 
 <style lang="scss" scoped>
+
+    .uploaded-image-gallery {
+        height : 80px;
+        width : 80px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .delete_icon {
+        position: absolute;
+        right : 10%;
+        top : 5%;
+        font-size : 9px;
+        color : #fff;
+    }
 
 </style>

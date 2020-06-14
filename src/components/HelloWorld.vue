@@ -1,6 +1,7 @@
 <template>
   <div>
     <welcomeSection></welcomeSection>
+
   </div>
 </template>
 
