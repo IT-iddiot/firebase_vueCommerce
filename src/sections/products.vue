@@ -61,7 +61,7 @@ export default {
     }
 
     .product-image {
-        height : 250px;
+        max-height : 250px;
         margin : 0 auto;
     }
 

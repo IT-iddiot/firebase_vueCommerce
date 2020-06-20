@@ -1,15 +1,23 @@
 <template>
-    <div class="orders">
-        I am order page
-    </div>
+    <span class="currency">{{ 123 | currency('EUR') }}</span>
 </template>
 
 <script>
-export default {
-    name : "allOrder"
-}
+    export default {
+        filters: {
+            currency(value, symbol) {
+                let result = value;
+                if (!isNaN(value)) {
+                    result = value.toFixed(2);
+                }
+                return symbol ? symbol + result : result;
+            }
+        }
+    };
 </script>
 
-<style scoped lang="scss">
-
+<style scoped>
+    .currency {
+        color: blue;
+    }
 </style>

@@ -14,7 +14,7 @@ export default {
         price : String,
         name : String,
         productId : String,
-        image : String
+        image : String,
     },
 
     data() {
@@ -29,7 +29,8 @@ export default {
                 id : this.productId,
                 name : this.name,
                 price : this.price,
-                image : this.image
+                image : this.image,
+                quantity : 1
             })
         }
     }

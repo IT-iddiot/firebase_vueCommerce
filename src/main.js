@@ -18,6 +18,8 @@ import VueCarousel from 'vue-carousel';
 import Vue2Filters from 'vue2-filters';
 
 import store from './store';
+import 'ag-grid-community/dist/styles/ag-grid.css'
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 // This would allow you to do person.id instead of person['.key'].
 Vue.use(VueFirestore, {

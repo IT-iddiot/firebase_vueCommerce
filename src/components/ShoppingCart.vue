@@ -11,23 +11,15 @@
             </div>
             <div class="modal-body">
                 <div class="container">
-                    <div class="row mb-4" v-for="(item,index) in this.$store.state.cart" :key="index">
-                        <div class="col-md-2 d-flex justify-content-center align-items-center">
-                            <img :src="item.image" alt="" width="80px" height="80px">
-                        </div>
-                        <div class="col-md-4 py-2" >
-                            <p class="w-100 text-truncate">{{ item.name }}</p>
-                            <a href="">Remove</a>
-                        </div>
-                        <div class="col-md-2 offset-md-4 py-2">
-                            <p class="h-100 d-flex justify-content-center align-items-center">{{ item.price | currency('RM', 0, { spaceBetweenAmountAndSymbol: true }) }}</p>
-                        </div>
-                    </div>
+                    <cart-item 
+                        v-for="(item,index) in this.$store.state.cart" :key="index"
+                        :item="item">
+                    </cart-item>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-link" data-dismiss="modal">Continue shopping</button>
-                <button type="button" class="btn btn-primary">Checkout</button>
+                <button type="button" class="btn btn-primary" @click="toCheckout">Checkout</button>
             </div>
             </div>
         </div>
@@ -35,8 +27,23 @@
 </template>
 
 <script>
+import $ from 'jquery';
+import CartItem from './CartItem';
+
 export default {
-    name : "shoppingCart"
+    name : "shoppingCart",
+
+    components : {
+        CartItem
+    },
+
+    methods : {
+        toCheckout() {
+            $('#shoppingCart').modal('hide');
+            this.$router.push('/checkout');
+        },
+        
+    }
 }
 </script>
 
